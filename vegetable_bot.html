@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vegetable Bot</title>
+  <style>
+    :root{--bg:#f6fbf6;--card:#ffffff;--accent:#2b7a2b;--muted:#6b6b6b}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#f6fbf6,#eef7ee);color:#123}
+    header{background:var(--accent);color:#fff;padding:18px 24px;display:flex;align-items:center;gap:16px}
+    header h1{font-size:18px;margin:0}
+    .container{max-width:1000px;margin:28px auto;padding:20px}
+    .card{background:var(--card);border-radius:12px;box-shadow:0 6px 20px rgba(20,20,20,0.06);padding:18px}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    .intro p{margin:8px 0;color:var(--muted)}
+    .list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+    .chip{background:#f1fff1;border:1px solid rgba(43,122,43,0.08);padding:8px;border-radius:8px;font-size:13px}
+    .right{position:relative}
+    .open-chat{display:inline-block;background:var(--accent);color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+    footer{max-width:1000px;margin:18px auto;text-align:center;color:var(--muted);font-size:13px}
+    @media (max-width:920px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="24" height="24" rx="6" fill="#fff" />
+      <path d="M7 12c0-2.761 2.239-5 5-5s5 2.239 5 5-2.239 5-5 5-5-2.239-5-5z" fill="#2b7a2b"/>
+    </svg>
+    <h1>Vegetable Bot — Quick Grocery Assistant</h1>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <section class="card intro">
+        <h2>Welcome 👋</h2>
+        <p>This page embeds your Watson Assistant chat integration for the vegetable bot. Visitors can ask about vegetables, synonyms, availability, or recipes.</p>
+        <p>Tip: Use the chat to test entity recognition (e.g., <em>"Do you have aloo or tomatar?"</em>).</p>
+
+        <div style="margin-top:12px">
+          <strong>Included intents (sample):</strong>
+          <div class="list" style="margin-top:8px">
+            <div class="chip">potato — aloo</div>
+            <div class="chip">tomato — tamatar</div>
+            <div class="chip">onion — pyaz</div>
+            <div class="chip">spinach — palak</div>
+            <div class="chip">capsicum — shimla mirch</div>
+            <div class="chip">bottle gourd — lauki</div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px">
+          <button class="open-chat" id="openChatBtn">Open Vegetable Bot Chat</button>
+        </div>
+      </section>
+
+      <aside class="card right">
+        <h3 style="margin-top:0">Chat Status</h3>
+        <p id="chatStatus">Chat widget not loaded yet.</p>
+        <p style="margin-top:12px;color:var(--muted)">If the chat doesn't appear, make sure the integration ID and service instance ID are correct and that your site is allowed by the Watson Assistant integration settings.</p>
+        <div style="margin-top:14px">
+          <strong>Integration details</strong>
+          <ul style="padding-left:18px;color:var(--muted)">
+            <li>Region: au-syd</li>
+            <li>Integration ID: 19efc560-4930-4d7a-9c98-40b188dd68f7</li>
+            <li>Service instance: f9197e31-925a-4714-856a-5910478a883c</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    Built for your Vegetable Bot — edit the HTML to customize styles or content.
+  </footer>
+
+  <!-- Watson Assistant embed (your provided script) -->
+  <script>
+    window.watsonAssistantChatOptions = {
+      integrationID: "19efc560-4930-4d7a-9c98-40b188dd68f7", // The ID of this integration.
+      region: "au-syd", // The region your integration is hosted in.
+      serviceInstanceID: "f9197e31-925a-4714-856a-5910478a883c", // The ID of your service instance.
+      onLoad: async (instance) => { await instance.render(); }
+    };
+    setTimeout(function(){
+      const t=document.createElement('script');
+      t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
+      document.head.appendChild(t);
+    });
+  </script>
+
+  <script>
+    // Wire the Open Chat button to attempt to open the Watson chat when available.
+    const openBtn = document.getElementById('openChatBtn');
+    const status = document.getElementById('chatStatus');
+
+    let watsonInstanceCheck = setInterval(()=>{
+      if(window.watsonAssistantChatOptions && window.watsonAssistantChatOptions.onLoad){
+        status.textContent = 'Chat script prepared — attempting to load...';
+      }
+      if(window.watsonAssistantChat){
+        status.textContent = 'Watson Assistant library loaded.';
+        clearInterval(watsonInstanceCheck);
+      }
+    },500);
+
+    openBtn.addEventListener('click', async ()=>{
+      try{
+        // If Watson provides a global open method, call it; otherwise inform user.
+        if(window.watsonAssistantChat){
+          // Many Watson installations expose a global method after loading. We try commonly-used APIs.
+          if(window.watsonAssistantChat.open){ window.watsonAssistantChat.open(); }
+          else if(window.AssistantChat && window.AssistantChat.open){ window.AssistantChat.open(); }
+          else alert('Chat loaded — if it is not visible check the top-right corner or integration settings.');
+        } else {
+          alert('Chat library not loaded yet. Please wait a few seconds and try again.');
+        }
+      }catch(err){
+        console.error(err);
+        alert('Could not open chat: '+err.message);
+      }
+    });
+  </script>
+</body>
+</html>
